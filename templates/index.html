@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English to Maithili Translator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo.png') }}">
+
+</head>
+<body>
+    <div class="container">
+        <center><img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="logo"></center>
+        <h1>English to Maithili Translator</h1>
+
+        <textarea id="inputText" placeholder="Enter English text..."></textarea>
+        <button onclick="translateText()">Translate</button>
+
+        <h2>Translation:</h2>
+        <textarea id="outputText" readonly></textarea>
+    </div>
+
+    <script>
+        function translateText() {
+            let inputText = document.getElementById("inputText").value;
+            fetch("/translate", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ text: inputText })
+            })
+            .then(response => response.json())
+            .then(data => document.getElementById("outputText").value = data.translation)
+            .catch(error => console.error("Error:", error));
+        }
+    </script>
+</body>
+</html>
