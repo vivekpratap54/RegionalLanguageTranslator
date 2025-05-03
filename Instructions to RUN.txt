@@ -1,0 +1,72 @@
+Step-by-Step Functionality
+
+
+1. Importing Libraries
+Libraries like pandas, nltk, seaborn, matplotlib, tensorflow, and sklearn are imported.
+
+nltk.download() is used to download tokenization and stopwords tools.
+
+2. Loading Dataset
+df = pd.read_csv(dataset_filename)
+Loads a CSV file (corrected_maithili_english_dataset2.csv) which contains two columns: Maithili and English.
+
+3. Preprocessing Text
+def clean_text(text): ...
+Cleans both Maithili and English sentences:
+
+Removes unwanted characters except letters and Devanagari characters.
+Converts to lowercase.
+Trims whitespaces.
+
+4. Visualizing Data
+sns.histplot(df['Cleaned_Maithili'].str.len())
+Plots the distribution of Maithili sentence lengths to understand input size variation.
+
+5. Splitting Dataset
+train_data, test_data = train_test_split(...)
+Splits dataset into 80% training and 20% testing.
+
+6. Tokenizing and Padding
+Tokenizer(num_words=max_words)
+Converts words to numbers.
+
+Applies to both Maithili and English cleaned texts.
+
+Limits vocabulary to 1000 words.
+
+Pads sequences to max_length = 10.
+
+7. Building the Model
+model = Sequential([
+    Embedding(...),
+    Bidirectional(LSTM(...)),
+    TimeDistributed(Dense(...))
+])
+Embedding layer maps word indices to dense vectors.
+
+Bidirectional LSTM layers process the sequence in both directions.
+
+TimeDistributed(Dense) outputs a prediction (softmax) at each timestep (i.e., for each word in the output sequence).
+
+8. Model Compilation
+model.compile(loss='categorical_crossentropy', ...)
+Uses categorical crossentropy as the loss function.
+
+Optimizer is Adam.
+
+Metrics tracked is accuracy.
+
+
+9. One-Hot Encoding Labels
+
+to_categorical_labels()
+Converts padded English sequences into 3D one-hot encoded arrays:
+Shape: (samples, sequence_length, vocab_size)
+Required for categorical_crossentropy.
+
+10. Training the Model
+
+model.fit(...)
+Trains the model for 10 epochs using training and validation data.
+
+11. Evaluation and Plotting
