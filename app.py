@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, jsonify
 from markupsafe import escape
 import os
+import re
 
 app = Flask(__name__)
 
@@ -22,8 +23,8 @@ english_to_maithili = {
     "रोटी": "Bread",
     "फल": "Fruit",
     "सपना": "Dream",
-
 }
+
 # ─── Build path to the sentence-level dataset ───────────────────────────────────
 BASE_DIR = os.path.dirname(__file__)
 DATA_PATH = os.path.join(BASE_DIR, "maithalidataset.txt")
@@ -53,27 +54,39 @@ sentence_templates = {
     ("what", "is", "this"): "ई के हो?",
 }
 
-# ─── Translation function combining sentence-level, templates, and word-level ──
-def translate_to_maithili(sentence):
-    sentence_lower = sentence.lower().strip()
+# ─── Helper: Split paragraph into individual sentences ─────────────────────────
+def split_into_sentences(text):
+    sentence_endings = re.compile(r'(?<=[.!?]) +')
+    return sentence_endings.split(text.strip())
 
-    # 1) Direct full-sentence lookup
-    if sentence_lower in sentence_translation:
-        return sentence_translation[sentence_lower]
+# ─── Translation function supporting multiple sentences ────────────────────────
+def translate_to_maithili(paragraph):
+    sentences = split_into_sentences(paragraph)
+    translated_sentences = []
 
-    # 2) Tuple-template lookup
-    words_tuple = tuple(sentence_lower.split())
-    if words_tuple in sentence_templates:
-        return sentence_templates[words_tuple]
+    for sentence in sentences:
+        sentence_lower = sentence.lower().strip()
 
-    # 3) Fallback to word-by-word
-    translated_words = [
-        english_to_maithili.get(word, word)
-        for word in sentence_lower.split()
-    ]
-    return " ".join(translated_words)
+        # 1) Direct sentence match
+        if sentence_lower in sentence_translation:
+            translated = sentence_translation[sentence_lower]
+        else:
+            # 2) Tuple-template match
+            words_tuple = tuple(sentence_lower.split())
+            if words_tuple in sentence_templates:
+                translated = sentence_templates[words_tuple]
+            else:
+                # 3) Word-by-word fallback
+                translated_words = [
+                    english_to_maithili.get(word, word)
+                    for word in sentence_lower.split()
+                ]
+                translated = " ".join(translated_words)
+        translated_sentences.append(translated)
 
-# ─── Flask routes ──────────────────────────────────────────────────────────────
+    return " ".join(translated_sentences)
+
+# ─── Flask Routes ──────────────────────────────────────────────────────────────
 @app.route('/')
 def home():
     return render_template('index.html')
