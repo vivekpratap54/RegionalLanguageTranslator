@@ -1,0 +1,72 @@
+Make sure Python is installed:
+
+Edit
+python --version
+If not, install Python, ideally version 3.9+.
+
+📁 Folder Structure (as per your screenshot)
+
+Flaskweb/
+│
+├── app.py
+├── maithalidataset.txt
+├── static/
+│   └── styles.css (and any other static files)
+├── templates/
+│   └── index.html
+🧩 Step 1: Set up a Virtual Environment (Recommended)
+
+cd path/to/Flaskweb
+
+# Create virtual environment
+python -m venv venv
+
+# Activate it
+# Windows:
+venv\Scripts\activate
+# macOS/Linux:
+source venv/bin/activate
+📦 Step 2: Install Required Libraries
+Create a requirements.txt file or install manually:
+
+
+pip install flask markupsafe
+To save these dependencies:
+
+pip freeze > requirements.txt
+📄 Sample requirements.txt (if needed)
+txt
+Copy
+Edit
+flask
+markupsafe
+
+Step 3: Ensure Dataset Exists
+Make sure the file maithalidataset.txt is in the same folder as app.py and is formatted like:
+
+मै एक छात्र हूँ	I am a student
+ई पुस्तक अछि	This is a book
+...
+Use Tab \t between Maithili and English.
+
+
+Step 4: Run the Flask App
+
+python app.py
+Output will show something like:
+
+* Running on http://127.0.0.1:5009
+Open your browser and go to: http://127.0.0.1:5009
+
+
+Step 5: Interact with Web UI
+index.html in the templates/ folder should contain a form or JavaScript that sends a POST request to /translate.
+
+The response will be the translated Maithili sentence.
+
+Troubleshooting
+If you get encoding or import errors:
+
+Use UTF-8 encoding.
+Ensure app.py, maithalidataset.txt, and your HTML/JS files are in the correct locations.
+If using PyCharm, make sure the correct Python interpreter (virtual environment) is selected.
